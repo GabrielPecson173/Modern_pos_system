@@ -6,12 +6,9 @@ import {
   UnstyledButton,
   Stack,
   Text,
-  ActionIcon,
   Box,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconPlus, IconDroplet, IconWashMachine } from '@tabler/icons-react';
-import { AddOrderModal } from './AddOrderModal';
+import { IconDroplet, IconWashMachine } from '@tabler/icons-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store';
 
@@ -68,10 +65,9 @@ function NavItem({ icon, label, active, onClick }: NavItemProps) {
 export function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
   const dispatch = useDispatch<AppDispatch>();
   const orderCount = useSelector((state: RootState) =>
-    state.orders.items.filter((o) => o.name !== '').length
+    state.orders.items.filter((o) => o.customer_name !== '').length
   );
 
   const navItems = [
@@ -81,8 +77,6 @@ export function AppLayout() {
 
   return (
     <>
-<AddOrderModal opened={modalOpened} onClose={closeModal} />
-
       <AppShell
         navbar={{ width: 64, breakpoint: 'sm' }}
         padding={0}
@@ -104,19 +98,6 @@ export function AppLayout() {
             style={{ borderBottom: '0.5px solid var(--mantine-color-gray-3)', width: '100%' }}
           >
             <Avatar size={36} radius="xl" color="teal">AC</Avatar>
-            <Tooltip label="New Order" position="right" withArrow>
-              <ActionIcon
-                size={28}
-                radius="xl"
-                color="teal"
-                variant="filled"
-                onClick={openModal}
-                aria-label="Add new order"
-              >
-                <IconPlus size={16} />
-              </ActionIcon>
-            </Tooltip>
-            <Text size="9px" c="dimmed">Add</Text>
           </Stack>
 
           <Stack align="center" gap={4} mt={8}>

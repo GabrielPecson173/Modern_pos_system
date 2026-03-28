@@ -3,12 +3,14 @@ import { ordersApi } from '../services/ordersApi';
 
 export interface Order {
   id: string;
-  name: string;
-  order_type: 'Delivery' | 'Pickup' | '';
+  customer_name: string;
+  order_type: 'Walk-in' | 'Phone' | 'Delivery' | 'Pickup' | '';
   product: string;
   quantity: number | '';
   unit_price: number | '';
   total: number | '';
+  order_date: string | null;   // "YYYY-MM-DD" from Django
+  created_at?: string;         // ISO timestamp, auto-set by Django
 }
 
 interface OrdersState {
@@ -52,12 +54,13 @@ const ordersSlice = createSlice({
       const newId = `row-${Date.now()}`;
       state.items.push({
         id: newId,
-        name: '',
+        customer_name: '',
         order_type: '',
         product: '',
         quantity: '',
         unit_price: '',
         total: '',
+        order_date: null,
       });
     },
     // updateRowLocally removed – no inline edits

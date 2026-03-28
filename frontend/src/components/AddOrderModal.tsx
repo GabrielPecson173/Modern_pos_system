@@ -16,7 +16,9 @@ import {
   Badge,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconDroplet, IconReceipt } from '@tabler/icons-react';
+import { DateInput } from '@mantine/dates';
+import '@mantine/dates/styles.css';
+import { IconDroplet, IconReceipt, IconCalendar } from '@tabler/icons-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -27,6 +29,7 @@ export interface OrderFormValues {
   quantity: number | '';
   unit_price: number | '';
   total: number | '';
+  order_date: Date | null;
 }
 
 interface AddOrderModalProps {
@@ -64,6 +67,7 @@ export function AddOrderModal({ opened, onClose }: { opened: boolean; onClose: (
       quantity: '',
       unit_price: '',
       total: '',
+      order_date: new Date(),
     },
     validate: {
       name: (v) => (v.trim().length < 2 ? 'Name must be at least 2 characters' : null),
@@ -101,12 +105,19 @@ const handleSave = async () => {
   if (result.hasErrors) return;
 
   try {
+    const od = form.values.order_date;
+    const orderDateStr = od
+      ? [od.getFullYear(), String(od.getMonth() + 1).padStart(2, '0'), String(od.getDate()).padStart(2, '0')].join('-')
+      : null;
+
     dispatch(createOrder({
       customer_name: form.values.name,
       order_type: form.values.order_type as 'Walk-in' | 'Phone',
       product: form.values.product,
       quantity: Number(form.values.quantity),
       unit_price: Number(form.values.unit_price),
+      total: Number(form.values.total),
+      order_date: orderDateStr,
     }));
     handleClose();
   } catch (error) {
@@ -190,6 +201,18 @@ const handleSave = async () => {
           searchable
           data={PRODUCT_OPTIONS}
           {...form.getInputProps('product')}
+          styles={inputStyles}
+        />
+
+        {/* Order Date */}
+        <DateInput
+          label="Order Date"
+          placeholder="Pick a date"
+          withAsterisk
+          maxDate={new Date()}
+          leftSection={<IconCalendar size={14} />}
+          valueFormat="MMMM D, YYYY"
+          {...form.getInputProps('order_date')}
           styles={inputStyles}
         />
 
